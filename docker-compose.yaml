@@ -1,0 +1,76 @@
+version: '2'
+
+services:
+  whisper:
+    cap_add:
+      - SYS_ADMIN
+    image: local/c7-systemd
+    volumes:
+      - /opt/docker/storage/whisper:/opt/graphite/storage/whisper
+
+  cachea:
+    cap_add:
+      - SYS_ADMIN
+    build: 
+      context: dockerfiles/graphite/carbon-cache
+      args: 
+        instance: a
+    image: local/carbon-cache-a
+    volumes_from:
+      - whisper
+    environment:
+      LOCAL_DATA_DIR: /opt/graphite/storage/whisper/a
+    ports:
+      - "2003:2003"
+
+  cacheb:
+    cap_add:
+      - SYS_ADMIN
+    build: 
+      context: dockerfiles/graphite/carbon-cache
+      args: 
+        instance: b
+    image: local/carbon-cache-b
+    volumes_from:
+      - whisper
+    environment:
+      LOCAL_DATA_DIR: /opt/graphite/storage/whisper/b
+ 
+  relay:
+    cap_add:
+      - SYS_ADMIN
+    build: 
+      context: dockerfiles/graphite/carbon-relay
+      args: 
+        destinations: cachea:2004, cacheb:2004
+    image: local/carbon-relay
+
+  web:
+    cap_add:
+      - SYS_ADMIN
+    build: dockerfiles/graphite/web
+    image: local/graphite
+    volumes_from:
+      - whisper
+    ports:
+      - "80:80"
+    links:
+      - cachea
+      - cacheb
+
+  vertx_guice:
+    build: dockerfiles/vertx_guice
+    image: local/vertx_guice
+    cap_add:
+      - SYS_ADMIN
+    ports:
+      - "8080:8080"
+      - "9200:9200"
+    links:
+      - cachea
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    links:
+      - web
