@@ -21,6 +21,7 @@ Simple project to test monitoring with collected / graphite.
 - login: mhamady
 - password: pass
 - [Graphite Rest APIs](https://github.com/brutasse/graphite-api/blob/master/docs/api.rst)
+- [Using grafana in graphite]( http://docs.grafana.org/features/datasources/graphite/) - datasource = http://web
 
 Enjoy!
 
