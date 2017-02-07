@@ -35,4 +35,4 @@ done
 
 docker-compose build
 
-mkdir /opt/docker/storage/whisper
+mkdir -p /opt/graphite/storage/whisper
