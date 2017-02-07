@@ -6,7 +6,7 @@ services:
       - SYS_ADMIN
     image: local/c7-systemd
     volumes:
-      - /opt/docker/storage/whisper:/opt/graphite/storage/whisper
+      - /opt/graphite/storage/whisper:/opt/graphite/storage/whisper
 
   cachea:
     cap_add:
